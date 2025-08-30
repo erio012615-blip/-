@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>究極クソUI怪物ログイン</title>
+<style>
+    body {
+        height: 400vh;
+        margin: 0;
+        padding: 0;
+        overflow-y: scroll;
+        user-select: none; /* 選択不可 */
+    }
+    #passwordHint {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 24px;
+        color: red;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    #loginForm {
+        position: fixed;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #eee;
+        padding: 20px;
+        border: 2px solid #333;
+        z-index: 1000;
+    }
+</style>
+<script>
+let lastScroll = 0;
+
+// 逆スクロール＋スクロール嫌がらせポップアップ
+window.addEventListener('scroll', function() {
+    const currentScroll = window.scrollY;
+    const diff = currentScroll - lastScroll;
+    window.scrollBy(0, -diff); // 上下反転
+    lastScroll = window.scrollY;
+
+    alert("スクロールするな！"); // スクロールするたびに警告
+});
+
+function login() {
+    var pass = document.getElementById("password").value;
+    if(pass === "ultradeep456") {
+        startPopupLoop();
+        window.onbeforeunload = function() { return "閉じるな！"; };
+        document.body.onclick = startPopupLoop;
+        document.body.onkeydown = startPopupLoop;
+        setInterval(spawnWindow, 3000);
+    } else {
+        alert("違うパスワードだよ！");
+    }
+}
+
+function startPopupLoop() {
+    alert("パスワード正解！");
+    setTimeout(startPopupLoop, 100);
+}
+
+function spawnWindow() {
+    var w = window.open("", "", "width=300,height=200");
+    if(w) {
+        w.document.write("<p>増殖怪物！閉じても復活する！</p>");
+        w.alert("閉じるな！");
+        w.onload = function() {
+            w.startPopupLoop = function() {
+                w.alert("増殖怪物！");
+                setTimeout(w.startPopupLoop, 100);
+            };
+            w.startPopupLoop();
+            w.onbeforeunload = function() { return "閉じるな！"; };
+            w.document.body.onclick = w.startPopupLoop;
+            w.document.body.onkeydown = w.startPopupLoop;
+        };
+    }
+}
+
+// コピー禁止
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</head>
+<body>
+<div id="loginForm">
+<h2>ログインフォーム</h2>
+<label>パスワード: <input type="password" id="password"></label>
+<button onclick="login()">ログイン</button>
+</div>
+
+<div id="passwordHint">パスワードはページ最下部！ultradeep456</div>
+</body>
+</html>
